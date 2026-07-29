@@ -19,11 +19,11 @@ export default function Timeline({ data }: WhiteButtonProps) {
 			>
 				<div className="w-full flex flex-row justify-between gap-2 text-[20px] md:text-[26px]">
 					<div className="w-3 h-3 left-[-6px] bg-white rounded-full absolute"></div>
-					<h1>{x.title}</h1>
-					<h1>{x?.year}</h1>
+					<h3>{x.title}</h3>
+					<span>{x?.year}</span>
 				</div>
 				<div className="text-[12px] md:text-[16px]">
-					<h2>{x.description}</h2>
+					<p>{x.description}</p>
 				</div>
 			</div>
 		);

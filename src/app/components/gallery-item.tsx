@@ -89,8 +89,8 @@ export default function GalleryItem({ item }: { item: itemProps }) {
 					${isOpen ? 'opacity-100 translate-y-0' : 'lg:opacity-0 translate-y-10'}
 					lg:group-hover:translate-y-0 lg:group-hover:opacity-100`}
 				>
-					<h1 className="font-bold text-[20px] md:text-[26px]">{item.name}</h1>
-					<h2 className="text-[16px]">{item.description}</h2>
+					<h2 className="font-bold text-[20px] md:text-[26px]">{item.name}</h2>
+					<p className="text-[16px]">{item.description}</p>
 					<TagsGroup tags={item.tags} />
 				</div>
 			</div>

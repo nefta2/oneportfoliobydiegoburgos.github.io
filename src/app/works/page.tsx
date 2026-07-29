@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { Space_Grotesk } from 'next/font/google';
 import Gallery from '../components/gallery';
 
@@ -5,11 +6,14 @@ const spaceGrotesk = Space_Grotesk({
 	weight: '300',
 	subsets: ['latin'],
 });
-export const metadata = {
+export const metadata: Metadata = {
 	title: 'Works',
+	description:
+		'Selected frontend and UI/UX work by Diego Burgos — websites and app prototypes built with React, Next.js, Tailwind CSS and Figma.',
+	alternates: { canonical: '/works' },
 };
 
-export default function ContactMe() {
+export default function Works() {
 	const works = [
 		{
 			name: 'Art Gallery Website',
