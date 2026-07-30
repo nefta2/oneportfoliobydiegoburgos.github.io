@@ -1,13 +1,23 @@
 @import 'tailwindcss';
 
+/*
+ * Palette. The site is dark-only by design — there is no light theme, so these
+ * are single values rather than a themeable pair.
+ */
 :root {
-	--background: #ffffff;
-	--foreground: #171717;
+	--background: #1d1d1d;
+	--foreground: #ededed;
+	/* Chip / muted surfaces and the muted link grey, promoted out of the
+	   hardcoded hex values that were scattered across components. */
+	--surface: #454545;
+	--muted: #898989;
 }
 
 @theme inline {
 	--color-background: var(--background);
 	--color-foreground: var(--foreground);
+	--color-surface: var(--surface);
+	--color-muted: var(--muted);
 	--font-sans: var(--font-geist-sans);
 }
 
@@ -15,6 +25,15 @@
 	--breakpoint-xs: 26rem;
 	--breakpoint-3xl: 101rem;
 	--animate-gradient: gradient 10s linear infinite;
+
+	/*
+	 * Motion curves. Mirrored in `src/app/motion.ts` as EASE_OUT / EASE_IN so
+	 * CSS hovers and framer-motion entrances share one feel. Change one,
+	 * change both. Usable as `ease-editorial` / `ease-editorial-in`.
+	 */
+	--ease-editorial: cubic-bezier(0.22, 1, 0.36, 1);
+	--ease-editorial-in: cubic-bezier(0.64, 0, 0.78, 0);
+
 	@keyframes gradient {
 		0% {
 			background-position: 0% 50%;
@@ -23,18 +42,75 @@
 			background-position: 100% 50%;
 		}
 	}
-}
 
-@media (prefers-color-scheme: dark) {
-	:root {
-		--background: #1d1d1d;
-		--foreground: #ededed;
+	/* Hairline draw-in: decorative rules grow from their origin edge. */
+	@keyframes hairline-in {
+		from {
+			transform: scaleX(0);
+		}
+		to {
+			transform: scaleX(1);
+		}
 	}
 }
 
 body {
-	background: #1d1d1d;
-	color: #ededed;
+	background: var(--background);
+	color: var(--foreground);
+}
+
+/* Anchor-free smooth scrolling for the two long pages. */
+html {
+	scroll-behavior: smooth;
+}
+
+/* Monochrome selection — inverts the page rather than introducing a colour. */
+::selection {
+	background: var(--foreground);
+	color: var(--background);
+}
+
+/* Thin scrollbar in the existing greys, so the drawer and long pages don't
+   punch a bright OS-coloured bar through the design. */
+* {
+	scrollbar-width: thin;
+	scrollbar-color: var(--surface) transparent;
+}
+
+*::-webkit-scrollbar {
+	width: 6px;
+	height: 6px;
+}
+
+*::-webkit-scrollbar-thumb {
+	background-color: var(--surface);
+	border-radius: 999px;
+}
+
+*::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+/*
+ * Global accessibility gate. Every animation on the site is decorative — none
+ * of it carries meaning — so under `prefers-reduced-motion` all of it collapses
+ * to an instant state change. framer-motion components additionally check
+ * `usePrefersReducedMotion()` (see `src/app/hooks.ts`) so they never even start
+ * a transition.
+ */
+@media (prefers-reduced-motion: reduce) {
+	html {
+		scroll-behavior: auto;
+	}
+
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+		transition-delay: 0ms !important;
+	}
 }
 
 .gradient-text {
@@ -62,117 +138,61 @@ body {
 	top: 0;
 	left: 0;
 	pointer-events: none;
+	/* The blob is scaled, never resized, so it always composites on the GPU. */
 	will-change: transform;
+	mix-blend-mode: difference;
 }
 
 .cursor-text {
-	border-radius: 50%;
 	position: fixed;
 	top: 0;
 	left: 0;
 	pointer-events: none;
+	white-space: nowrap;
 	will-change: transform;
 }
 
-.about-image {
-	position: relative;
-	overflow: hidden;
+/*
+ * Hairline rules that draw themselves in on first paint.
+ * `--hairline-delay` staggers siblings; set it inline per element.
+ */
+.hairline-draw {
+	transform-origin: left center;
+	animation: hairline-in 0.9s var(--ease-editorial) both;
+	animation-delay: var(--hairline-delay, 0s);
 }
 
-.about-image::before,
-.about-image::after {
-	content: '';
-	position: absolute;
-	inset: 0;
-	background-position: center;
-	background-size: cover;
-	transition: opacity 0.5s ease-out, filter 0.5s ease-out;
-	z-index: 0;
+.hairline-draw-vertical {
+	transform-origin: top center;
+	animation: hairline-in 0.9s var(--ease-editorial) both;
+	animation-delay: var(--hairline-delay, 0s);
 }
 
-.about-image::before {
-	background-image: url('/meteor.svg');
-	opacity: 1;
+@media (prefers-reduced-motion: reduce) {
+	.hairline-draw,
+	.hairline-draw-vertical {
+		animation: none;
+	}
 }
 
-.about-image::after {
-	background-image: url('/about-me.jpg');
-	background-position: 30% 70%;
-	opacity: 0;
-	filter: brightness(50%) blur(0px);
-}
-
-.about-image:hover::before {
-	opacity: 0;
-}
-
-.about-image:hover::after {
-	opacity: 1;
-}
-
-.about-image > * {
-	position: relative;
-	z-index: 1;
-}
-
-/* Make sure text stays above the images */
-.works-image > * {
-	position: relative;
-	z-index: 1;
-}
-
-.works-image {
-	position: relative;
-	overflow: hidden;
-}
-
-.works-image::before,
-.works-image::after {
-	content: '';
-	position: absolute;
-	inset: 0;
-	background-position: center;
-	background-size: cover;
-	transition: opacity 0.5s ease-out, filter 0.5s ease-out;
-	z-index: 0;
-}
-
-.works-image::before {
-	background-image: url('/simple_shiny.svg');
-	opacity: 1;
-}
-
-.works-image::after {
-	background-image: url('/works-image.png');
-	opacity: 0;
-	filter: brightness(50%) blur(0px);
-}
-
-.works-image:hover::before {
-	opacity: 0;
-}
-
-.works-image:hover::after {
-	opacity: 1;
-}
-
-/* Make sure text stays above the images */
-.works-image > * {
-	position: relative;
-	z-index: 1;
-}
-
-/* Make sure text stays above the images */
-.contact-me > * {
-	position: relative;
-	z-index: 1;
-}
-
+/*
+ * Home tiles — decorative SVG that cross-fades to a photo on hover.
+ *
+ * The photo now also settles from a slight over-scale as it fades in, which
+ * reads as the image "arriving" rather than just appearing. Only `opacity` and
+ * `transform` animate; the blur/brightness are static.
+ */
+.about-image,
+.works-image,
 .contact-me {
 	position: relative;
 	overflow: hidden;
 }
 
+.about-image::before,
+.about-image::after,
+.works-image::before,
+.works-image::after,
 .contact-me::before,
 .contact-me::after {
 	content: '';
@@ -180,31 +200,131 @@ body {
 	inset: 0;
 	background-position: center;
 	background-size: cover;
-	transition: opacity 0.5s ease-out, filter 0.5s ease-out;
+	transition: opacity 0.5s var(--ease-editorial),
+		transform 0.9s var(--ease-editorial);
 	z-index: 0;
+}
+
+.about-image::before,
+.works-image::before,
+.contact-me::before {
+	opacity: 1;
+}
+
+.about-image::after,
+.works-image::after,
+.contact-me::after {
+	opacity: 0;
+	filter: brightness(50%);
+	transform: scale(1.12);
+}
+
+.about-image:hover::before,
+.works-image:hover::before,
+.contact-me:hover::before {
+	opacity: 0;
+	transform: scale(1.06);
+}
+
+.about-image:hover::after,
+.works-image:hover::after,
+.contact-me:hover::after {
+	opacity: 1;
+	transform: scale(1);
+}
+
+/* Keyboard users get the same reveal as pointer users. */
+.about-image:focus-visible::before,
+.works-image:focus-visible::before,
+.contact-me:focus-visible::before {
+	opacity: 0;
+}
+
+.about-image:focus-visible::after,
+.works-image:focus-visible::after,
+.contact-me:focus-visible::after {
+	opacity: 1;
+	transform: scale(1);
+}
+
+.about-image::before {
+	background-image: url('/meteor.svg');
+}
+
+.about-image::after {
+	background-image: url('/about-me.jpg');
+	background-position: 30% 70%;
+}
+
+.works-image::before {
+	background-image: url('/simple_shiny.svg');
+}
+
+.works-image::after {
+	background-image: url('/works-image.png');
 }
 
 .contact-me::before {
 	background-image: url('/sprinkle.svg');
-	opacity: 1;
 }
 
 .contact-me::after {
 	background-image: url('/contact-me.jpeg');
-	opacity: 0;
-	filter: brightness(50%) blur(0px);
 }
 
-.contact-me:hover::before {
-	opacity: 0;
-}
-
-.contact-me:hover::after {
-	opacity: 1;
-}
-
-/* Make sure text stays above the images */
+/*
+ * Keep tile content above both pseudo-element layers.
+ *
+ * `z-index` only — deliberately *not* `position: relative`. This file is
+ * unlayered, so it outranks every Tailwind utility; forcing `position` here
+ * would silently override an `absolute` set in markup (it did, and it flattened
+ * the tile hairlines into the flex row). Tile children are flex items, so
+ * `z-index` applies to them without needing to be positioned, and anything that
+ * does need positioning declares it in its own class list.
+ */
+.about-image > *,
+.works-image > *,
 .contact-me > * {
-	position: relative;
 	z-index: 1;
+}
+
+/*
+ * Text roll — the signature hover across the nav, the home tiles and the
+ * gallery cards. Two stacked copies of the same string; the pair slides up by
+ * exactly one line so the outgoing and incoming glyphs swap in place.
+ *
+ * The duplicate is `aria-hidden` in markup, so assistive tech reads the label
+ * once.
+ */
+.text-roll {
+	position: relative;
+	display: inline-block;
+	overflow: hidden;
+	vertical-align: bottom;
+	/* Breathing room so `overflow: hidden` doesn't shave descenders, cancelled
+	   by an equal negative margin so the label still occupies its natural box.
+	   Both layers travel 100% of this same box, so the swap stays exact. */
+	padding-bottom: 0.16em;
+	margin-bottom: -0.16em;
+}
+
+.text-roll__layer {
+	display: block;
+	transition: transform 0.45s var(--ease-editorial);
+}
+
+.text-roll__layer--incoming {
+	position: absolute;
+	inset: 0;
+	transform: translateY(100%);
+}
+
+.group:hover .text-roll__layer,
+.group:focus-visible .text-roll__layer {
+	transform: translateY(-100%);
+}
+
+.group:hover .text-roll__layer--incoming,
+.group:focus-visible .text-roll__layer--incoming {
+	transform: translateY(0);
 }

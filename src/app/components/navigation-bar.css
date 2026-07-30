@@ -1,41 +1,41 @@
-.nav-link {
+/*
+ * Nav links: a hairline that wipes in from the left on hover and wipes out to
+ * the right on leave. It animates `transform`, not `width`, so it never
+ * triggers layout — the previous `transition: width` did on every frame.
+ */
+.nav-link,
+.nav-link-db,
+.nav-link-active {
 	position: relative;
 }
 
-.nav-link::after {
+.nav-link::after,
+.nav-link-db::after,
+.nav-link-active::after {
 	content: '';
-	height: 1px;
 	position: absolute;
-	bottom: 3px;
-	right: 0;
-	width: 0;
-	transition: width 0.2s;
-	background-color: white;
-}
-
-.nav-link:hover::after {
-	width: 100%;
 	left: 0;
-}
-
-.nav-link-db {
-	position: relative;
-}
-
-.nav-link-db::after {
-	content: '';
+	right: 0;
+	bottom: 0;
 	height: 1px;
-	position: absolute;
-	bottom: 10px;
-	right: 0;
-	width: 0;
-	transition: width 0.2s;
-	background-color: white;
+	background-color: #fff;
+	transform: scaleX(0);
+	transform-origin: right center;
+	transition: transform 0.35s var(--ease-editorial);
 }
 
-.nav-link-db:hover::after {
-	width: 100%;
-	left: 0;
+.nav-link:hover::after,
+.nav-link:focus-visible::after,
+.nav-link-db:hover::after,
+.nav-link-db:focus-visible::after {
+	transform: scaleX(1);
+	transform-origin: left center;
+}
+
+/* The current page keeps its rule drawn. */
+.nav-link-active::after {
+	transform: scaleX(1);
+	transform-origin: left center;
 }
 
 .burger-button {
@@ -47,14 +47,25 @@
 	justify-content: center;
 	gap: 5px;
 	z-index: 50;
-	transition: transform 0.3s ease;
+	transition: transform 0.3s var(--ease-editorial);
+}
+
+.burger-button:hover {
+	transform: scale(1.08);
+}
+
+.burger-button:active {
+	transform: scale(0.92);
 }
 
 .line {
 	height: 2px;
 	background-color: #fff; /* or currentColor if you prefer */
 	border-radius: 2px;
-	transition: all 0.3s ease-in-out;
+	/* Was `all`, which also animated the (unset) background and width. Only the
+	   two properties that actually change are transitioned now. */
+	transition: transform 0.3s var(--ease-editorial),
+		opacity 0.2s var(--ease-editorial);
 }
 
 .top,
@@ -71,21 +82,9 @@
 
 .burger-button.open .middle {
 	opacity: 0;
+	transform: scaleX(0);
 }
 
 .burger-button.open .bottom {
 	transform: rotate(-45deg) translate(5px, -5px);
-}
-
-.dropdown-link {
-	opacity: 0;
-	transform: translateY(20px);
-	animation: dropdownLinkFadeIn 0.4s ease forwards;
-}
-
-@keyframes dropdownLinkFadeIn {
-	to {
-		opacity: 1;
-		transform: translateY(0);
-	}
 }

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Space_Grotesk } from 'next/font/google';
 import Gallery from '../components/gallery';
+import PageHeader from '../components/page-header';
 
 const spaceGrotesk = Space_Grotesk({
 	weight: '300',
@@ -48,10 +49,17 @@ export default function Works() {
 	];
 	return (
 		<div
-			className={`${spaceGrotesk.className} flex flex-col  gap-10 items-center  h-full mx-5 my-5 lg:mx-40`}
+			className={`${spaceGrotesk.className} flex flex-col h-full mx-5 my-5 lg:mx-40`}
 		>
-			<h1 className="flex flex-row items-start w-full text-[30px]">Works.</h1>
+			<PageHeader
+				eyebrow="Works"
+				title="Selected work."
+				intro="University projects, design prototypes, and the site you’re on. Click any card for the full story."
+			/>
 
+			{/* The grid keeps its images deliberately: on a works page the screenshots
+			    are the content, so this is the one list that isn't collapsed into
+			    hairline rows. The cards carry the same `(01)` index motif instead. */}
 			<Gallery items={works} />
 		</div>
 	);

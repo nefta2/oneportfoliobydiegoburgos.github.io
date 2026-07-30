@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import { Space_Grotesk } from 'next/font/google';
 import WhiteButton from '../components/white-button';
 import Timeline from '../components/timeline';
+import Reveal, { RevealItem } from '../components/reveal';
+import PageHeader, { SectionHeading } from '../components/page-header';
 import Image from 'next/image';
 
 const spaceGrotesk = Space_Grotesk({
@@ -48,66 +50,55 @@ export default function About() {
 		},
 	];
 	return (
-		<>
-			<div
-				className={`${spaceGrotesk.className} mx-10 my-10 lg:mx-35 lg:my-10`}
+		<div
+			className={`${spaceGrotesk.className} flex flex-col h-full mx-5 my-5 lg:mx-40`}
+		>
+			<PageHeader eyebrow="About me" title="My name is Diego Burgos." />
+
+			<Reveal
+				stagger
+				amount={0.15}
+				// `lg:items-center` because the portrait is much taller than the bio;
+				// top-aligning them left a large void under the button.
+				className="flex flex-col lg:flex-row gap-10 lg:gap-20 items-start lg:items-center justify-between pt-10 lg:pt-16"
 			>
-				<div
-					className={`flex flex-col lg:flex-row gap-5 lg:gap-10 items-center justify-between h-full mb-10 lg:mb-20 mt-5 lg:mt-10`}
-				>
-					<div className="flex flex-col gap-10 text-center items-center lg:items-start lg:text-left">
-						<div>
-							<p className="text-[18px] lg:text-[46px]">
-								Thank you for coming here,
-							</p>
-							<h1 className="text-[42px] lg:text-[64px]">
-								My name is{' '}
-								<span className="gradient-text px-4 size-[-webkit-fill-available] text-center sm:text-left text-transparent animate-gradient h-full sm:h-[60%]">
-									Diego Burgos
-								</span>
-							</h1>
-						</div>
-						<p className="text-[16px] lg:text-[18px] max-w-[650px]">
-							I’m a software engineer currently working as a frontend developer,
-							I’m enhanced by innovation and creative solutions oriented to
-							satisfy user experience and needs.
-						</p>
-						<WhiteButton
-							title="Contact me"
-							horizontalPadding={60}
-							route="/contact-me"
-							width={250}
-						/>
-					</div>
-					<div>
+				{/* Same classes as the page header's intro, so the bio reads as one
+				    family with the intro lines on `/works` and `/contact-me`. */}
+				<RevealItem className="flex flex-col gap-8 lg:gap-10 max-w-[520px]">
+					<p className="text-[16px] lg:text-[18px] text-[#898989]">
+						Thank you for coming here. I’m a software engineer currently working
+						as a frontend developer, enhanced by innovation and creative
+						solutions oriented to satisfy user experience and needs.
+					</p>
+					<WhiteButton
+						title="Contact me"
+						horizontalPadding={60}
+						route="/contact-me"
+						width={250}
+					/>
+				</RevealItem>
+
+				<RevealItem className="w-full lg:w-[420px] shrink-0">
+					{/* Clipped wrapper so the portrait can settle from a slight
+					    over-scale on hover without spilling past its corners. */}
+					<div className="overflow-hidden rounded-lg">
 						<Image
 							src="/about-me.jpg"
 							alt="Diego Burgos at a museum"
 							width={500}
 							height={900}
+							className="w-full h-auto transition-transform duration-700 ease-editorial hover:scale-[1.04]"
 							priority
 						/>
 					</div>
-				</div>
-				<hr className="w-full max-w-[1000px] mx-auto border-t border-white opacity-50" />
+				</RevealItem>
+			</Reveal>
 
-				<div>
-					<h2 className="text-[32px] lg:text-[40px] py-10">
-						<span className="gradient-text px-4 size-[-webkit-fill-available] text-center sm:text-left text-transparent animate-gradient h-full sm:h-[60%]">
-							My Experience
-						</span>
-					</h2>
-					<Timeline data={workExperience} />
-				</div>
-				<div>
-					<h2 className="text-[32px] lg:text-[40px] py-10">
-						<span className="gradient-text px-4 size-[-webkit-fill-available] text-center sm:text-left text-transparent animate-gradient h-full sm:h-[60%]">
-							Tech Stacks I Use
-						</span>
-					</h2>
-					<Timeline data={techStacks} />
-				</div>
-			</div>
-		</>
+			<SectionHeading>My Experience</SectionHeading>
+			<Timeline data={workExperience} />
+
+			<SectionHeading>Tech Stacks I Use</SectionHeading>
+			<Timeline data={techStacks} />
+		</div>
 	);
 }

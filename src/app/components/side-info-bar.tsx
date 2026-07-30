@@ -5,6 +5,9 @@ import './gallery.css';
 import { ChevronDownIcon, ChevronLeftIcon } from '@heroicons/react/16/solid';
 import Image from 'next/image';
 import { useEffect, useRef } from 'react';
+import { motion } from 'framer-motion';
+import { DURATION, EASE_OUT, STAGGER } from '../motion';
+import { usePrefersReducedMotion } from '../hooks';
 
 const spaceGrotesk = Space_Grotesk({
 	weight: '400',
@@ -33,6 +36,8 @@ export default function SideInfoBar({
 	isMobile,
 }: SideInfoBar) {
 	const sideBarRef = useRef<HTMLDivElement>(null);
+	const reduceMotion = usePrefersReducedMotion();
+
 	useEffect(() => {
 		if (!isMobile || !close) return;
 
@@ -68,43 +73,90 @@ export default function SideInfoBar({
 		};
 	}, [isMobile, close]);
 
+	/*
+	 * The panel itself slides in; its contents then arrive one block at a time,
+	 * starting once the slide is roughly half done. Without the delay the copy
+	 * would land before the panel had finished moving and the two motions would
+	 * fight each other.
+	 */
+	const container = {
+		hidden: {},
+		visible: {
+			transition: { staggerChildren: STAGGER, delayChildren: DURATION.fast },
+		},
+	};
+
+	const block = {
+		hidden: { opacity: 0, y: 16 },
+		visible: {
+			opacity: 1,
+			y: 0,
+			transition: { duration: DURATION.base, ease: EASE_OUT },
+		},
+	};
+
 	return (
-		<div
+		<motion.div
 			ref={sideBarRef}
-			className={`${spaceGrotesk.className} overscroll-contain flex flex-col gap-10 top-0 max-h-full overflow-y-auto right-0 h-full pb-40  p-5 px-10 translate-x-0 z-50`}
+			variants={reduceMotion ? undefined : container}
+			initial={reduceMotion ? undefined : 'hidden'}
+			animate={reduceMotion ? undefined : 'visible'}
+			className={`${spaceGrotesk.className} overscroll-contain flex flex-col gap-10 top-0 max-h-full overflow-y-auto right-0 h-full pb-40  p-5 px-10 z-50`}
 		>
-			<div className="flex flex-row flex-start cursor-pointer" onClick={close}>
-				{isMobile ? (
-					<ChevronDownIcon className="w-10 h-10" strokeWidth={1} />
-				) : (
-					<ChevronLeftIcon className="w-10 h-10" strokeWidth={1} />
-				)}
-			</div>
-			<div className="flex flex-col gap-2">
+			<motion.div variants={reduceMotion ? undefined : block}>
+				<button
+					type="button"
+					onClick={close}
+					aria-label="Close project details"
+					className="flex flex-row flex-start cursor-pointer transition-transform duration-200 ease-editorial hover:-translate-x-1 focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-4 rounded-sm"
+				>
+					{isMobile ? (
+						<ChevronDownIcon className="w-10 h-10" strokeWidth={1} />
+					) : (
+						<ChevronLeftIcon className="w-10 h-10" strokeWidth={1} />
+					)}
+				</button>
+			</motion.div>
+
+			<motion.div
+				variants={reduceMotion ? undefined : block}
+				className="flex flex-col gap-2"
+			>
 				<h2>
 					<span className="text-[40px] font-bold">{title}</span>
 				</h2>
 				<p>
 					<span className="text-[16px] font-medium">{smDescription}</span>
 				</p>
-			</div>
-			<div className="flex flex-col gap-2">
+			</motion.div>
+
+			<motion.div
+				variants={reduceMotion ? undefined : block}
+				className="flex flex-col gap-2"
+			>
 				<h3>
 					<span className="text-[30px] font-bold">About</span>
 				</h3>
 				<p>
 					<span className="text-[16px] font-medium">{about}</span>
 				</p>
-			</div>
-			<div className="flex flex-col gap-2">
+			</motion.div>
+
+			<motion.div
+				variants={reduceMotion ? undefined : block}
+				className="flex flex-col gap-2"
+			>
 				<h3>
 					<span className="text-[30px] font-bold">Tags</span>
 				</h3>
 				<TagsGroup tags={tags || []} />
-			</div>
+			</motion.div>
 
 			{github && (
-				<div className="flex flex-col gap-2">
+				<motion.div
+					variants={reduceMotion ? undefined : block}
+					className="flex flex-col gap-2"
+				>
 					<h3>
 						<span className="text-[30px] font-bold flex flex-row gap-2 items-center">
 							{' '}
@@ -119,17 +171,23 @@ export default function SideInfoBar({
 							Github
 						</span>
 					</h3>
+					{/* Brightening to the foreground grey is the new hover cue; the
+					    underline stays as the affordance. */}
 					<a
 						href={github}
 						target="_blank"
-						className="text-[#898989] hover:underline text-[16px] lg:text-[18px]"
+						rel="noopener noreferrer"
+						className="text-[#898989] hover:text-[#ededed] hover:underline underline-offset-4 text-[16px] lg:text-[18px] transition-colors duration-200 ease-editorial w-fit break-all"
 					>
 						{github}
 					</a>
-				</div>
+				</motion.div>
 			)}
 			{figma && (
-				<div className="flex flex-col gap-2">
+				<motion.div
+					variants={reduceMotion ? undefined : block}
+					className="flex flex-col gap-2"
+				>
 					<h3>
 						<span className="text-[30px] font-bold flex flex-row gap-2 items-center">
 							{' '}
@@ -154,12 +212,13 @@ export default function SideInfoBar({
 					<a
 						href={figma}
 						target="_blank"
-						className="text-[#898989] hover:underline  text-[16px] lg:text-[18px]"
+						rel="noopener noreferrer"
+						className="text-[#898989] hover:text-[#ededed] hover:underline underline-offset-4 text-[16px] lg:text-[18px] transition-colors duration-200 ease-editorial w-fit"
 					>
 						Click here to check design
 					</a>
-				</div>
+				</motion.div>
 			)}
-		</div>
+		</motion.div>
 	);
 }
