@@ -104,5 +104,6 @@ The visual language is deliberate: **monochrome, editorial, high-contrast, lots 
 ## Rendering traps that have already bitten this repo
 
 - **Sub-pixel rules must be borders, not backgrounds.** Chromium snaps a `0.5px`-tall background box away to nothing but clamps a `0.5px` *border* to a visible hairline. The home tile rules are `border-b-[0.5px]` spans for exactly this reason.
+- **That clamp is Chromium-only — `0.5px` rules nearly vanish on iOS.** Chromium rounds any sub-pixel border up to a computed `1px` (and snaps `1.5px` back down to `1px`), so a `0.5px` rule looks identical to a `1px` one there. WebKit honours the width: at DPR 3 it computes `0.5px` to `0.333px`, one device pixel, which reads as a faint grey smudge on a phone. Anywhere a `0.5px` rule is load-bearing structure rather than decoration, give it a full `1px` at small viewports. Desktop Chrome will never show you this — test hairlines in WebKit (`npx playwright install webkit`, then drive `devices['iPhone 13']`).
 - **`globals.css` is unlayered, so it outranks every Tailwind utility.** A rule like `.about-image > * { position: relative }` silently beats an `absolute` set in markup. Prefer `z-index`-only rules and let markup own positioning.
 - **Don't branch a component's tree shape on a media query read during the first render.** See the `usePrefersReducedMotion` note above.

@@ -151,10 +151,17 @@ export default function Home() {
 							 * box away to nothing, but clamps a sub-pixel border to a
 							 * visible hairline. That clamping is what made the original
 							 * `border-b-[0.5px]` render at all.
+							 *
+							 * That clamp is *Chromium's*, though, and it is why the rule is
+							 * a full 1px below `sm`. WebKit honours the sub-pixel width
+							 * instead: at DPR 3 it computes 0.5px to 0.333px — a single
+							 * device pixel — so on iOS Safari the rule all but disappears.
+							 * Below `sm` the tiles stack and these bottom rules are the only
+							 * thing dividing them, so they have to survive that.
 							 */}
 							<span
 								aria-hidden="true"
-								className="hairline-draw absolute bottom-0 left-0 w-full border-b-[0.5px] border-white"
+								className="hairline-draw absolute bottom-0 left-0 w-full border-b border-white sm:border-b-[0.5px]"
 								style={
 									{ '--hairline-delay': `${i * 0.1}s` } as React.CSSProperties
 								}
