@@ -46,6 +46,15 @@ export default function Works() {
 				'I designed and developed my personal portfolio website with a focus on simplicity, clean layout, and intuitive navigation. My goal was to create a modern and distinctive design that incorporates current 2025 design trends, including subtle motion elements and interactive visuals.',
 			github: 'https://github.com/nefta2/portfolio_2025',
 		},
+		{
+			name: 'Best Friend Ever',
+			description: 'Lowkey a job to be this cunty every single day.',
+			bgPhoto: 'entes.png',
+			tags: ['Bitch.js', 'Bratscript', 'Tailcunt'],
+			about:
+				'Me encanta el combo 9 de Burger King',
+			github: 'https://github.com/nefta2/portfolio_2025',
+		},
 	];
 	return (
 		<div
