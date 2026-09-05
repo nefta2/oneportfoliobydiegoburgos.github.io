@@ -53,7 +53,7 @@ export default function About() {
 		<div
 			className={`${spaceGrotesk.className} flex flex-col h-full mx-5 my-5 lg:mx-40`}
 		>
-			<PageHeader eyebrow="About me" title="My name is Diego Burgos." />
+			<PageHeader eyebrow="About me" title="My name is Diego Burger." />
 
 			<Reveal
 				stagger
@@ -66,12 +66,12 @@ export default function About() {
 				    family with the intro lines on `/works` and `/contact-me`. */}
 				<RevealItem className="flex flex-col gap-8 lg:gap-10 max-w-[520px]">
 					<p className="text-[16px] lg:text-[18px] text-[#898989]">
-						Thank you for coming here. I’m a software engineer currently working
-						as a frontend developer, enhanced by innovation and creative
-						solutions oriented to satisfy user experience and needs.
+						Hola soy Diego Burgos y me pico una cobra gay en aguadulce y ahora tengo poderes.
+						La gente no lo sabe pero me gusta picarme y comerme los mocos cuando nadie mira.
+						Soy increible y tengo la mejor personalidad y carisma en todo Panamá.
 					</p>
 					<WhiteButton
-						title="Contact me"
+						title="Hombres Gays arrechos a 2km"
 						horizontalPadding={60}
 						route="/contact-me"
 						width={250}
