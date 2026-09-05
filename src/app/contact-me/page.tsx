@@ -48,8 +48,8 @@ export default function ContactMe() {
 			className={`${spaceGrotesk.className} flex flex-col h-full mx-5 my-5 lg:mx-40`}
 		>
 			<PageHeader
-				eyebrow="Contact me"
-				title="Let’s make something."
+				eyebrow="Llamenme pls que no me gusta mi trabajo"
+				title="Lets count all my contacts"
 				intro="Three ways to reach me. Pick whichever is easiest — I answer to all of them."
 			/>
 
