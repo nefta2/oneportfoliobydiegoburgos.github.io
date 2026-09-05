@@ -18,12 +18,12 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 const TILES = [
-	{ text: '(I) about.', className: 'about-image', route: '/about' },
-	{ text: '(II) works.', className: 'works-image', route: '/works' },
-	{ text: '(III) contact me.', className: 'contact-me', route: '/contact-me' },
+	{ text: 'Segundo Digito', className: 'about-image', route: '/about' },
+	{ text: 'Tercer Digito', className: 'works-image', route: '/works' },
+	{ text: 'Cuarto Digito', className: 'contact-me', route: '/contact-me' },
 ];
 
-const HERO_LINES = ['ONE', 'PORTFOLIO BY', 'DIEGO BURGOS.'];
+const HERO_LINES = ['ONE', 'PORTFOLIO BY', 'DIEGO BURGER. With Love❤️'];
 
 /** The blob is a 32px circle that is *scaled*, never resized. */
 const CURSOR_SIZE = 32;
